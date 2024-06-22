@@ -1,0 +1,1031 @@
+<style type="text/css">
+.table.table-light > thead > tr > th { text-align:center !important; border:1px solid #a7b3b9 !important}
+.table > caption + thead > tr:first-child > th, .table > colgroup + thead > tr:first-child > th, .table > thead:first-child > tr:first-child > th, .table > caption + thead > tr:first-child > td, .table > colgroup + thead > tr:first-child > td, .table > thead:first-child > tr:first-child > td { vertical-align:middle !important}
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td{ text-align:center !important; border:1px solid #a7b3b9 !important}
+</style>
+  <div class="row">
+  <div class="note note-danger">
+ 		<?php 
+                 //   $customiz_locs = $this->main_model->GET_DOCTOR_CUSTOMIZED_LOC($_SESSION["my_ID"]);
+  				   if(count($customiz_locs) == 1)
+				   {
+                     echo '<div class="col-md-3"><h4 class="block" id="location"> اهلا وسهلا بالدكتور.'.$_SESSION['my_USERNAME'].'</h4></div>'; 
+					 echo '<div class="col-md-6"><p> انت الان في قسم '.$customiz_locs[0]["LOC_NAME_AR"].'</p></div>';
+					 $_SESSION["DOC_CUSTOMIZED_LOC"] = $customiz_locs[0]["LOC_CODE"]; 
+					 $_SESSION["DOC_CUSTOMIZED_LOCNAME"] = $customiz_locs[0]["LOC_NAME_AR"];
+					 $_SESSION["DOC_CUSTOMIZED_LOCMASTER"] = $customiz_locs[0]["LOC_MASTER_CD"];
+				   }
+				   elseif(count($customiz_locs) > 1 )
+				   {
+					 if($_SESSION["DOC_CUSTOMIZED_LOC"] == '' || empty($_SESSION["DOC_CUSTOMIZED_LOC"]))
+					 {
+					   $xx = "<p> انت الان في عيادة <strong style='color:red'>".$customiz_locs[0]["LOC_NAME_AR"].
+									"</strong> وبامكانك الاختيار من القائمة</p>";
+							   $_SESSION["DOC_CUSTOMIZED_LOC"] = $customiz_locs[0]["LOC_CODE"]; 
+							 $_SESSION["DOC_CUSTOMIZED_LOCNAME"] = $customiz_locs[0]["LOC_NAME_AR"];
+							 $_SESSION["DOC_CUSTOMIZED_LOCMASTER"] = $customiz_locs[0]["LOC_MASTER_CD"];
+							 }
+						else
+							  $xx = "<p> انت الان في عيادة <strong style='color:red'>".$_SESSION["DOC_CUSTOMIZED_LOCNAME"].
+							  "</strong> بامكانك الاختيار من القائمة</p> ";
+							 echo '<div id="location">';
+							 echo '<div class="col-md-3"><p class="block" id="location"> اهلا وسهلا بالدكتور.'.$_SESSION['my_USERNAME'].'</p></div>';
+							 echo '<div class="col-md-6">'.$xx.'</div>';
+							 echo '</div>';
+							 echo '<div class="col-md-3">';
+							 echo "<select id='ddl_loc_sess' class='form-control col-md-3'>";
+							 echo "<option value='0' >اختر من القائمة</option>";
+							 foreach($customiz_locs as $cus_loc){
+								 $selected='';
+								 if(isset($_SESSION["DOC_CUSTOMIZED_LOC"]))
+									if($_SESSION["DOC_CUSTOMIZED_LOC"]==$cus_loc["LOC_CODE"])
+										$selected="selected";
+		 echo "<option value='".$cus_loc["LOC_CODE"]."╩".$cus_loc["LOC_NAME_AR"]."╩".$cus_loc["LOC_MASTER_CD"]."' ".$selected.">".$cus_loc["LOC_NAME_AR"]."</option>";
+							  }
+							 echo "</select></div>";
+						   }
+				   else
+				   { 
+				      redirect('welcome/view/dashrd_user');
+				   }
+                 ?>
+                <br/>
+              <br/>
+          </div>
+    <div class="page-content-wrapper">
+		<div class="page-content">   
+            <div class="row" id="visua_tail">
+				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<a href="#" onclick="get_outpatient_data();" id="outpatient_tail" is_loaded="0">
+                        <div class="dashboard-stat blue-madison">
+                            <div class="visual">
+                                <i class="fa fa-comments"></i>
+                            </div>
+                            <div class="details">
+                                <div class="number">
+                                     <?= $pat_count   ;?>
+                                </div>
+                                <div class="desc">
+                                    عدد مرضى العيادة
+                                </div>
+                            </div>
+                         
+                        </div>
+                    </a>
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<a href="#" onclick="get_inppatient_data();" id="inpatient_tail" is_loaded="0"><div class="dashboard-stat red-intense">
+						<div class="visual">
+							<i class="fa fa-bar-chart-o"></i>
+						</div>
+						<div class="details">
+							<div class="number">
+								 <?= $inpat_count   ;?>
+							</div>
+							<div class="desc">
+								 عدد مرضى القسم
+							</div>
+						</div>
+ 					</div></a>
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<div class="dashboard-stat green-haze">
+						<div class="visual">
+							<i class="fa fa-shopping-cart"></i>
+						</div>
+						<div class="details">
+							<div class="number">
+								 50
+							</div>
+							<div class="desc">
+								طلبات المختبر 
+							</div>
+						</div>
+ 					</div>
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+					<div class="dashboard-stat purple-plum">
+						<div class="visual">
+							<i class="fa fa-globe"></i>
+						</div>
+						<div class="details">
+							<div class="number">
+								 5
+							</div>
+							<div class="desc">
+								طلبات الإستشارة
+							</div>
+						</div>
+ 					</div>
+				</div>
+			</div>
+			<!--	 END DASHBOARD STATS -->
+<!--			<div class="clearfix">
+			</div>
+			 
+			<div class="clearfix">
+			</div>-->
+			<div class="row">
+				<div class="col-md-6 col-sm-6" id="outpatienttb">
+					
+				</div>
+				<div class="col-md-6 col-sm-6" id="inpatienttb">
+					
+				</div>
+			</div>
+            <div class="clearfix">
+            <div class="col-md-6 col-sm-6">
+					<!-- BEGIN PORTLET-->
+					<div class="portlet light">
+						<div class="portlet-title tabbable-line">
+							<div class="caption caption-md">
+								<i class="icon-globe theme-font hide"></i>
+								<span class="caption-subject theme-font bold uppercase">Feeds</span>
+							</div>
+							<ul class="nav nav-tabs">
+								<li class="active">
+									<a href="#tab_1_1" data-toggle="tab">
+									System </a>
+								</li>
+								<li>
+									<a href="#tab_1_2" data-toggle="tab">
+									Activities </a>
+								</li>
+							</ul>
+						</div>
+                    <div class="portlet-body">
+                        <!--BEGIN TABS-->
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab_1_1">
+                                <div class="scroller" style="height: 337px;" data-always-visible="1" data-rail-visible1="0" data-handle-color="#D7DCE2">
+										<ul class="feeds">
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-success">
+																<i class="fa fa-bell-o"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 You have 4 pending tasks. <span class="label label-sm label-info">
+																Take action <i class="fa fa-share"></i>
+																</span>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 Just now
+													</div>
+												</div>
+											</li>
+											<li>
+												<a href="javascript:;">
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-success">
+																<i class="fa fa-bell-o"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New version v1.4 just lunched!
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 20 mins
+													</div>
+												</div>
+												</a>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-danger">
+																<i class="fa fa-bolt"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 Database server #12 overloaded. Please fix the issue.
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 24 mins
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-info">
+																<i class="fa fa-bullhorn"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New order received and pending for process.
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 30 mins
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-success">
+																<i class="fa fa-bullhorn"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New payment refund and pending approval.
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 40 mins
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-warning">
+																<i class="fa fa-plus"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New member registered. Pending approval.
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 1.5 hours
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-success">
+																<i class="fa fa-bell-o"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 Web server hardware needs to be upgraded. <span class="label label-sm label-default ">
+																Overdue </span>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 2 hours
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-default">
+																<i class="fa fa-bullhorn"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 Prod01 database server is overloaded 90%.
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 3 hours
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-warning">
+																<i class="fa fa-bullhorn"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New group created. Pending manager review.
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 5 hours
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-info">
+																<i class="fa fa-bullhorn"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 Order payment failed.
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 18 hours
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-default">
+																<i class="fa fa-bullhorn"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New application received.
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 21 hours
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-info">
+																<i class="fa fa-bullhorn"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 Dev90 web server restarted. Pending overall system check.
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 22 hours
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-default">
+																<i class="fa fa-bullhorn"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New member registered. Pending approval
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 21 hours
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-info">
+																<i class="fa fa-bullhorn"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 L45 Network failure. Schedule maintenance.
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 22 hours
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-default">
+																<i class="fa fa-bullhorn"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 Order canceled with failed payment.
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 21 hours
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-info">
+																<i class="fa fa-bullhorn"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 Web-A2 clound instance created. Schedule full scan.
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 22 hours
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-default">
+																<i class="fa fa-bullhorn"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 Member canceled. Schedule account review.
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 21 hours
+													</div>
+												</div>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-info">
+																<i class="fa fa-bullhorn"></i>
+															</div>
+														</div>
+
+														<div class="cont-col2">
+															<div class="desc">
+																 New order received. Please take care of it.
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 22 hours
+													</div>
+												</div>
+											</li>
+										</ul>
+									</div>
+								</div>
+								<div class="tab-pane" id="tab_1_2">
+									<div class="scroller" style="height: 337px;" data-always-visible="1" data-rail-visible1="0" data-handle-color="#D7DCE2">
+										<ul class="feeds">
+											<li>
+												<a href="javascript:;">
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-success">
+																<i class="fa fa-bell-o"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New user registered
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 Just now
+													</div>
+												</div>
+												</a>
+											</li>
+											<li>
+												<a href="javascript:;">
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-success">
+																<i class="fa fa-bell-o"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New order received
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 10 mins
+													</div>
+												</div>
+												</a>
+											</li>
+											<li>
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-danger">
+																<i class="fa fa-bolt"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 Order #24DOP4 has been rejected. <span class="label label-sm label-danger ">
+																Take action <i class="fa fa-share"></i>
+																</span>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 24 mins
+													</div>
+												</div>
+											</li>
+											<li>
+												<a href="javascript:;">
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-success">
+																<i class="fa fa-bell-o"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New user registered
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 Just now
+													</div>
+												</div>
+												</a>
+											</li>
+											<li>
+												<a href="javascript:;">
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-success">
+																<i class="fa fa-bell-o"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New user registered
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 Just now
+													</div>
+												</div>
+												</a>
+											</li>
+											<li>
+												<a href="javascript:;">
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-success">
+																<i class="fa fa-bell-o"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New user registered
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 Just now
+													</div>
+												</div>
+												</a>
+											</li>
+											<li>
+												<a href="javascript:;">
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-success">
+																<i class="fa fa-bell-o"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New user registered
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 Just now
+													</div>
+												</div>
+												</a>
+											</li>
+											<li>
+												<a href="javascript:;">
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-success">
+																<i class="fa fa-bell-o"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New user registered
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 Just now
+													</div>
+												</div>
+												</a>
+											</li>
+											<li>
+												<a href="javascript:;">
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-success">
+																<i class="fa fa-bell-o"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New user registered
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 Just now
+													</div>
+												</div>
+												</a>
+											</li>
+											<li>
+												<a href="javascript:;">
+												<div class="col1">
+													<div class="cont">
+														<div class="cont-col1">
+															<div class="label label-sm label-success">
+																<i class="fa fa-bell-o"></i>
+															</div>
+														</div>
+														<div class="cont-col2">
+															<div class="desc">
+																 New user registered
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col2">
+													<div class="date">
+														 Just now
+													</div>
+												</div>
+												</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+							<!--END TABS-->
+						</div>
+					</div>
+					<!-- END PORTLET-->
+				</div>
+                <div class="col-md-6 col-sm-6">
+					<!-- BEGIN PORTLET-->
+					<div class="portlet light">
+						<div class="portlet-title tabbable-line">
+							<div class="caption caption-md">
+								<i class="icon-globe theme-font hide"></i>
+								<span class="caption-subject theme-font bold uppercase">Cosultation </span>
+							</div>
+							<ul class="nav nav-tabs">
+								<li class="active">
+									<a href="#tab_1_1_1" data-toggle="tab">
+									My Requests </a>
+                                    
+								</li>
+								<li>
+                                
+									<a href="#tab_1_2_1" data-toggle="tab">
+									Request to me <span class="badge badge-default" style="font-size:8px;" id="c_req_tome">0</span></a>
+								</li>
+							</ul>
+						</div>
+						<div class="portlet-body">
+							<!--BEGIN TABS-->
+							<div class="tab-content">
+								<div class="tab-pane active" id="tab_1_1_1">
+									<div class="scroller" style="height: 337px;" data-always-visible="1" data-rail-visible1="0" 
+                                        data-handle-color="#D7DCE2">
+										<div id="my_request" class="general-item-list">
+                                            <?php 
+                                                foreach($res_myconsult as $res_rows){ ?>
+                                                        <div class="item">
+                                                            <div class="item-head">
+                                                                <div class="item-details">
+                                                                    <a style="cursor:pointer"  
+                                                                     title="<?=$res_rows["CONS_CODE"]?>" 
+                                                                     from_doctor = "<?="د. ".$res_rows["MATLOOP_NAME"]?>" 
+                                                                      class="item-name primary-link show_replay_doc">
+ 																	   <?php echo "د. ".$res_rows["MATLOOP_NAME"] ?></a>
+                                                                       <i class="icon-bell"></i>
+                                                                       <span id="head_count" class="badge badge-default"><?php echo $come_replay?></span>
+                                                                    <span class="item-label"><?PHP echo $res_rows["CREATED_ON"]?></span>
+                                                                </div>
+                                                                <span class="item-status">
+                                                                	<span class="badge badge-empty badge-success"></span> 
+                                                                		Open
+                                                                    </span>
+                                                            </div>
+                                                            <div class="item-body">
+                                                                <?php echo $res_rows["PAT_NAME"].': '.$res_rows["REASONE"]?>										
+                                                            </div>
+                                                        </div>
+                                                         
+                                                         
+                                                <?php } ?>		
+                                                    </div>
+									</div>
+                                    <div class="scroller-footer">
+                                            <div class="btn-arrow-link pull-right">
+                                                <a href="<?=base_url()?>All_consults/all_consults_vw">All My Requests</a>
+                                                <i class="icon-arrow-right"></i>
+                                            </div>
+                                        </div>
+								</div>
+								<div class="tab-pane" id="tab_1_2_1">
+                                    <div class="portlet light">
+                                            <div class="portlet-title">
+                                                <div class="caption caption-md">
+                                                    <i class="icon-bar-chart theme-font hide"></i>
+                                                    <span class="caption-subject theme-font bold uppercase">Consultation Requests</span>
+                                                    <span class="caption-helper"><!--45 pending--></span>
+                                                </div>
+                                                <div class="inputs">
+                                                    <div class="portlet-input input-inline input-small ">
+                                                        <div class="input-icon right">
+                                                            <i class="icon-magnifier"></i>
+                                                            <input type="text" class="form-control form-control-solid" placeholder="search...">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                <div class="portlet-body">
+                    <div class="scroller" style="height: 305px;" data-always-visible="1" data-rail-visible1="0" data-handle-color="#D7DCE2">
+                                <div id="request_to_me" class="general-item-list">
+                                    <?php 
+                                    foreach($res_consult as $res_rows){ ?>
+                                            <div class="item">
+                                                <div class="item-head">
+                                                    <div class="item-details">
+                                            <a style="cursor:pointer;" onclick='UPDATE_CONSULTATION("<?=$res_rows["CONS_CODE"]?>",
+                                                                                                    "<?=$res_rows["VISIT_SERIAL"]?>",
+                                                                                                    "<?=$res_rows["NEW_VISIT_SERIAL"]?>",
+                                                                                                    "<?= str_replace("\n"," ",
+                                                                                                    $res_rows["REASONE"]) ; ?>" ,
+                                                                                                    "<?=$res_rows["MRP_PATREC_CODE"]?>" , 
+                                                                                                    "<?=$res_rows["TALEB_NAME"]?>" ,
+                                                                                                    "<?=$res_rows["MATLOOP_NAME"]?>",
+                                                                                                    "<?=$LOC_INFO["LOC_CODE"]?>" ,
+                                                                                                    "<?=$LOC_INFO["LOC_NAME_AR"]?>")' class="item-name primary-link">
+                                                        <?php echo " استشارة من د.". $res_rows["TALEB_NAME"] . " للمريض  ".$res_rows["PAT_NAME"]?></a>
+                                                        <span class="item-label">
+                                                            <?PHP echo $res_rows["CREATED_ON"]?>
+                                                        </span>
+                                                    </div>
+                                                 <span class="item-status"><span class="badge badge-empty badge-success"></span> Open</span>
+                                                </div>
+                                                <div class="item-body">
+                                                    <?php echo $res_rows["REASONE"]?>										
+                                                </div>
+                                            </div>
+                                    <?php } ?>		
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                        <div class="scroller-footer">
+                                            <div class="btn-arrow-link pull-right">
+                                                <a href="<?=base_url()?>All_consults/all_consults_vw">All Requests to me</a>
+                                                <i class="icon-arrow-right"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+								</div>
+							</div>
+							<!--END TABS-->
+						</div>
+					</div>
+					<!-- END PORTLET-->
+				</div>
+			
+            <!--<div class="col-md-6 col-sm-6">
+					<div class="portlet light">
+						<div class="portlet-title">
+							<div class="caption caption-md">
+								<i class="icon-bar-chart theme-font hide"></i>
+								<span class="caption-subject theme-font bold uppercase">Consultation Requests</span>
+								<span class="caption-helper">45 pending</span>
+							</div>
+							<div class="inputs">
+								<div class="portlet-input input-inline input-small ">
+									<div class="input-icon right">
+										<i class="icon-magnifier"></i>
+										<input type="text" class="form-control form-control-solid" placeholder="search...">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="portlet-body">
+							<div class="scroller" style="height: 305px;" data-always-visible="1" data-rail-visible1="0" data-handle-color="#D7DCE2">
+								<div class="general-item-list">
+									<div class="item">
+										<div class="item-head">
+											<div class="item-details">
+												<a href="" class="item-name primary-link">Dr.Hafiz Younis</a>
+												<span class="item-label">3 hrs ago</span>
+											</div>
+											<span class="item-status"><span class="badge badge-empty badge-success"></span> Open</span>
+										</div>
+										<div class="item-body">
+											 Plz find the test lab result for this patient,i sent you the patient's history.
+										</div>
+									</div>
+                                    <div class="item">
+										<div class="item-head">
+											<div class="item-details">
+												<a href="" class="item-name primary-link">Dr.Amine Tabaza</a>
+												<span class="item-label">1 hrs ago</span>
+											</div>
+											<span class="item-status"><span class="badge badge-empty badge-success"></span> Open</span>
+										</div>
+										<div class="item-body">
+											 Hi,i need your suggestion for this patient.
+										</div>
+									</div>
+									<div class="item">
+										<div class="item-head">
+											<div class="item-details">
+												<a href="" class="item-name primary-link">Dr.Ahmed Qumsan</a>
+												<span class="item-label">Urgent</span>
+											</div>
+											<span class="item-status"><span class="badge badge-empty badge-success"></span> Open</span>
+										</div>
+										<div class="item-body">
+											Please,this patient need referral to Israel.
+										</div>
+									</div>
+									
+									
+									
+									
+									
+								</div>
+							</div>
+						</div>
+					</div>
+					
+				</div>-->
+			</div>
+			<div class="clearfix">
+            <!--<div class="row">
+				<div class="col-md-12">
+					<div class="portlet box green-meadow calendar">
+						<div class="portlet-title">
+							<div class="caption">
+								<i class="fa fa-gift"></i>Calendar
+							</div>
+						</div>
+						<div class="portlet-body">
+							<div class="row">
+								
+								<div class="col-md-12 col-sm-12">
+									<div id="calendar" class="has-toolbar">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>-->
+			</div>
+				
+			<div class="clearfix">
+			</div>
+			 
+			<div class="clearfix">
+			</div>
+ 
+        </div>
+      </div>
+     
+
+<script src="<?php echo base_url(); ?>assets/js/dashboard.js"></script>
+ 
+<script type="text/javascript">
+	$(document).ready(function(e) {
+       var c = $("#request_to_me").children().length;
+	   $("#c_req_tome").text(c);
+    });
+</script>
+
+				 	
+	 
